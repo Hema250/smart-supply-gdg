@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from "react-router";
+import { createBrowserRouter, Navigate, Outlet } from "react-router";
 import { DashboardLayout } from "./components/DashboardLayout";
 import { Login } from "./components/Login";
 import { Dashboard } from "./components/Dashboard";
@@ -11,8 +11,11 @@ import { DemandPrediction } from "./components/DemandPrediction";
 import { Sustainability } from "./components/Sustainability";
 import { Support } from "./components/Support";
 
-// Simple Auth Check for Route Guarding
-const isAuthenticated = () => !!localStorage.getItem("user_name");
+// Reactive Auth Guard Component
+const ProtectedRoute = () => {
+  const isAuth = !!localStorage.getItem("user_name");
+  return isAuth ? <DashboardLayout /> : <Navigate to="/login" replace />;
+};
 
 export const router = createBrowserRouter([
   {
@@ -21,7 +24,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: isAuthenticated() ? <DashboardLayout /> : <Navigate to="/login" replace />,
+    element: <ProtectedRoute />,
     children: [
       { index: true, element: <Dashboard /> },
       { path: "inventory", Component: Inventory },
